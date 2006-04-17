@@ -1,87 +1,79 @@
 package Cache::Memcached::Tie;
 
-use 5.008008;
 use strict;
 use warnings;
 
-require Exporter;
 use AutoLoader qw(AUTOLOAD);
 
-our @ISA = qw(Exporter);
+use base 'Cache::Memcached';
+use vars qw($VERSION);
+$VERSION = '0.01';
 
-# Items to export into callers namespace by default. Note: do not export
-# names by default without a very good reason. Use EXPORT_OK instead.
-# Do not simply export all your public functions/methods/constants.
+sub TIEHASH{
+    my $package=shift;
+    my @params=@_;
+    my $self=$package->new(@params);
+    return $self;
+}
 
-# This allows declaration	use Cache::Memcached::Tie ':all';
-# If you do not need this, moving things directly into @EXPORT or @EXPORT_OK
-# will save memory.
-our %EXPORT_TAGS = ( 'all' => [ qw(
-	
-) ] );
+sub STORE{
+    my $self=shift;
+    my $key=shift;
+    my $value=shift;
+    $self->{cache}->set($key=>$value);    
+}
 
-our @EXPORT_OK = ( @{ $EXPORT_TAGS{'all'} } );
+sub FETCH{ # Returns value or hashref (key=>$value)
+    my $self=shift;
+    my @keys=split "\x1C", shift; # Some hack for multiple keys
+    if (@keys==1){
+        return $self->get($keys[0]);
+    } else {
+        return $self->get_multi(@keys);
+    }
+}
 
-our @EXPORT = qw(
-	
-);
+sub DELETE{
+    my $self=shift;
+    my $key=shift;
+    $self->delete($key);
+}
 
-our $VERSION = '0.01';
-
-
-# Preloaded methods go here.
-
-# Autoload methods go after =cut, and are processed by the autosplit program.
+sub UNTIE{
+    my $self=shift;
+    $self->disconnect_all();
+}
 
 1;
 __END__
-# Below is stub documentation for your module. You'd better edit it!
 
 =head1 NAME
 
-Cache::Memcached::Tie - Perl extension for blah blah blah
+Cache::Memcached::Tie - Using Cache::Memcached as hash
 
 =head1 SYNOPSIS
 
-  use Cache::Memcached::Tie;
-  blah blah blah
+    #!/usr/bin/perl -w
+    use strict;
+    use Cache::Memcached::Tie;
+    
+    my %hash;
+    my $memd=tie %hash,'Cache::Memcached::Tie', {servers=>['192.168.0.77:11211']};
+    $hash{b}=['a',{b=>'a'}];
+    print $hash{'a'};
+    print $memd->get('b');
 
 =head1 DESCRIPTION
 
-Stub documentation for Cache::Memcached::Tie, created by h2xs. It looks like the
-author of the extension was negligent enough to leave the stub
-unedited.
-
-Blah blah blah.
-
-=head2 EXPORT
-
-None by default.
-
-
-
-=head1 SEE ALSO
-
-Mention other useful documentation such as the documentation of
-related modules or operating system documentation (such as man pages
-in UNIX), or any relevant external documentation such as RFCs or
-standards.
-
-If you have a mailing list set up for your module, mention it here.
-
-If you have a web site set up for your module, mention it here.
+Tie for memcached.
+Read `perldoc perltie`
 
 =head1 AUTHOR
 
-wheel, E<lt>andrew@ggg.comE<gt>
+Andrew Kostenko E<lt>gugu@cpan.orgE<gt>
 
 =head1 COPYRIGHT AND LICENSE
 
-Copyright (C) 2006 by wheel
-
-This library is free software; you can redistribute it and/or modify
-it under the same terms as Perl itself, either Perl version 5.8.8 or,
-at your option, any later version of Perl 5 you may have available.
-
+GNU GPL
 
 =cut
