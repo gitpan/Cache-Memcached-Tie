@@ -7,7 +7,7 @@ use AutoLoader qw(AUTOLOAD);
 
 use base 'Cache::Memcached';
 use vars qw($VERSION);
-$VERSION = '0.01';
+$VERSION = '0.02';
 
 sub TIEHASH{
     my $package=shift;
@@ -20,7 +20,7 @@ sub STORE{
     my $self=shift;
     my $key=shift;
     my $value=shift;
-    $self->{cache}->set($key=>$value);    
+    $self->set($key=>$value);    
 }
 
 sub FETCH{ # Returns value or hashref (key=>$value)
