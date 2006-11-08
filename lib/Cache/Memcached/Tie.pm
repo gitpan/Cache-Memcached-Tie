@@ -7,30 +7,42 @@ use AutoLoader qw(AUTOLOAD);
 
 use base 'Cache::Memcached';
 use vars qw($VERSION);
-$VERSION = '0.02';
+$VERSION = '0.03';
+
+use fields qw(default_expire_seconds);
 
 sub TIEHASH{
-    my $package=shift;
-    my @params=@_;
+    my ($package, $default_expire_seconds, @params) = @_;
     my $self=$package->new(@params);
+    $self->{'default_expire_seconds'} = $default_expire_seconds;
     return $self;
 }
 
 sub STORE{
-    my $self=shift;
-    my $key=shift;
-    my $value=shift;
-    $self->set($key=>$value);    
+    my ($self, $key, $value) = @_;
+    $self->set($key, $value, $self->{'default_expire_seconds'});
 }
 
-sub FETCH{ # Returns value or hashref (key=>$value)
+# Check for the existence of a value - same as fetch, but sadly this is
+# necessary for when the hash is used by libraries that need EXISTS
+# functionality
+sub EXISTS {
+    my ($self, $key) = @_;
+    my $val = $self->FETCH($key);
+    return defined($val);
+}
+
+# Returns value or hashref (key=>$value)
+sub FETCH {
     my $self=shift;
     my @keys=split "\x1C", shift; # Some hack for multiple keys
+    my $val;
     if (@keys==1){
-        return $self->get($keys[0]);
+        $val = $self->get($keys[0]);
     } else {
-        return $self->get_multi(@keys);
+        $val = $self->get_multi(@keys);
     }
+    return $val;
 }
 
 sub DELETE{
