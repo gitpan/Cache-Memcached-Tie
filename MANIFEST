@@ -4,3 +4,4 @@ MANIFEST
 README
 t/Cache-Memcached-Tie.t
 lib/Cache/Memcached/Tie.pm
+META.yml                                 Module meta-data (added by MakeMaker)

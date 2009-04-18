@@ -3,24 +3,31 @@ package Cache::Memcached::Tie;
 use strict;
 use warnings;
 
-use AutoLoader qw(AUTOLOAD);
 
-use base 'Cache::Memcached';
+use Cache::Memcached::Fast;
 use vars qw($VERSION);
-$VERSION = '0.03';
+$VERSION = '0.04';
 
 use fields qw(default_expire_seconds);
 
 sub TIEHASH{
     my ($package, $default_expire_seconds, @params) = @_;
-    my $self=$package->new(@params);
+    my $self = {};
+    bless $self, $package;
+    my $memd = Cache::Memcached::Fast->new(@params);
+    $self->{'memd'} = $memd;
     $self->{'default_expire_seconds'} = $default_expire_seconds;
     return $self;
 }
 
+sub memd {
+    my $self = shift;
+    return $self->{memd};
+}
+
 sub STORE{
     my ($self, $key, $value) = @_;
-    $self->set($key, $value, $self->{'default_expire_seconds'});
+    $self->memd->set($key, $value, $self->{'default_expire_seconds'});
 }
 
 # Check for the existence of a value - same as fetch, but sadly this is
@@ -38,9 +45,9 @@ sub FETCH {
     my @keys=split "\x1C", shift; # Some hack for multiple keys
     my $val;
     if (@keys==1){
-        $val = $self->get($keys[0]);
+        $val = $self->memd->get($keys[0]);
     } else {
-        $val = $self->get_multi(@keys);
+        $val = $self->memd->get_multi(@keys);
     }
     return $val;
 }
@@ -48,7 +55,7 @@ sub FETCH {
 sub DELETE{
     my $self=shift;
     my $key=shift;
-    $self->delete($key);
+    $self->memd->delete($key);
 }
 
 sub UNTIE{
@@ -61,7 +68,7 @@ __END__
 
 =head1 NAME
 
-Cache::Memcached::Tie - Using Cache::Memcached as hash
+Cache::Memcached::Tie - Use Cache::Memcached::Fast like hash.
 
 =head1 SYNOPSIS
 
@@ -70,19 +77,23 @@ Cache::Memcached::Tie - Using Cache::Memcached as hash
     use Cache::Memcached::Tie;
     
     my %hash;
-    my $memd=tie %hash,'Cache::Memcached::Tie', {servers=>['192.168.0.77:11211']};
-    $hash{b}=['a',{b=>'a'}];
+    my $default_expiration_in_seconds = 60;
+    my $memd = tie %hash,'Cache::Memcached::Tie', $default_expiration_in_seconds, {servers=>['192.168.0.77:11211']};
+    $hash{b} = ['a', { b => 'a' }];
     print $hash{'a'};
     print $memd->get('b');
 
+    #Also we can work with slices:
+    @hash{ 'a' .. 'z' } = ( 1 .. 26 );
+    print join ',', @hash{ 'a' .. 'e' }; 
+
 =head1 DESCRIPTION
 
-Tie for memcached.
-Read `perldoc perltie`
+Memcached works like big dictionary... So why we can't use it as Perl hash?
 
 =head1 AUTHOR
 
-Andrew Kostenko E<lt>gugu@cpan.orgE<gt>
+Andrii Kostenko E<lt>andrey@kostenko.name<gt>
 
 =head1 COPYRIGHT AND LICENSE
 
