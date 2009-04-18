@@ -6,7 +6,7 @@ use warnings;
 
 use Cache::Memcached::Fast;
 use vars qw($VERSION);
-$VERSION = '0.04';
+$VERSION = '0.05';
 
 use fields qw(default_expire_seconds);
 

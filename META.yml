@@ -1,6 +1,6 @@
 --- #YAML:1.0
 name:                Cache-Memcached-Tie
-version:             0.04
+version:             0.05
 abstract:            Use Cache::Memcached::Fast like hash.
 license:             ~
 author:              
@@ -8,6 +8,7 @@ author:
 generated_by:        ExtUtils::MakeMaker version 6.42
 distribution_type:   module
 requires:     
+    Cache::Memcached::Fast:        0
 meta-spec:
     url:     http://module-build.sourceforge.net/META-spec-v1.3.html
     version: 1.3
