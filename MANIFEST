@@ -1,7 +1,9 @@
 Changes
+COPYRIGHT
+lib/Cache/Memcached/Tie.pm
 Makefile.PL
 MANIFEST
+META.yml
 README
 t/Cache-Memcached-Tie.t
-lib/Cache/Memcached/Tie.pm
-META.yml                                 Module meta-data (added by MakeMaker)
+t/Memd.pm
