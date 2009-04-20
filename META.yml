@@ -1,6 +1,6 @@
 --- #YAML:1.0
 name:                Cache-Memcached-Tie
-version:             0.06
+version:             0.07
 abstract:            Use Cache::Memcached::Fast like hash.
 license:             ~
 author:              

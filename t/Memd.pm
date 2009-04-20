@@ -75,7 +75,7 @@ BEGIN {
         $error = "No server is running at "
             . join(', ', grep { not exists $version->{$_} } @servers);
         undef $memd;
-        undef %memd;
+#        undef %memd;
     }
 }
 
