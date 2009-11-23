@@ -2,11 +2,11 @@ package Cache::Memcached::Tie;
 
 use strict;
 use warnings;
-
+use 5.8.0;
 
 use Cache::Memcached::Fast;
 use vars qw($VERSION);
-$VERSION = '0.07';
+$VERSION = '0.08';
 
 use fields qw(default_expire_seconds);
 
@@ -93,10 +93,10 @@ Memcached works like big dictionary... So why we can't use it as Perl hash?
 
 =head1 AUTHOR
 
-Andrii Kostenko E<lt>andrey@kostenko.name<gt>
+Andrii Kostenko E<lt>andrey@kostenko.nameE<gt>
 
 =head1 COPYRIGHT AND LICENSE
 
-GNU GPL
+This library is free software; you can redistribute it and/or modify it under the same terms as Perl itself.
 
 =cut

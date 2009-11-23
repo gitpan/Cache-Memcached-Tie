@@ -1,14 +1,25 @@
---- #YAML:1.0
-name:                Cache-Memcached-Tie
-version:             0.07
-abstract:            Use Cache::Memcached::Fast like hash.
-license:             ~
-author:              
-    - Andrew Kostenko <gugu@cpan.org>
-generated_by:        ExtUtils::MakeMaker version 6.42
-distribution_type:   module
-requires:     
-    Cache::Memcached::Fast:        0
+---
+abstract: 'Use Cache::Memcached::Fast like hash.'
+author:
+  - 'Andrii Kostenko <andrey@kostenko.name>'
+build_requires:
+  ExtUtils::MakeMaker: 6.42
+configure_requires:
+  ExtUtils::MakeMaker: 6.42
+distribution_type: module
+generated_by: 'Module::Install version 0.91'
+license: perl
 meta-spec:
-    url:     http://module-build.sourceforge.net/META-spec-v1.3.html
-    version: 1.3
+  url: http://module-build.sourceforge.net/META-spec-v1.4.html
+  version: 1.4
+name: Cache-Memcached-Tie
+no_index:
+  directory:
+    - inc
+    - t
+requires:
+  Cache::Memcached::Fast: 0
+  perl: 5.8.0
+resources:
+  license: http://dev.perl.org/licenses/
+version: 0.08

@@ -6,8 +6,7 @@ use strict;
 
 use Cache::Memcached::Tie;
 use Storable;
-#use IO::Compress::Gzip;
-#use IO::Uncompress::Gunzip;
+use Socket;
 
 our (@addr, %params, %memd, $version_str, $version_num, $error);
 
