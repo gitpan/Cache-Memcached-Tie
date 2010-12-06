@@ -6,7 +6,7 @@ use 5.8.0;
 
 use Cache::Memcached::Fast;
 use vars qw($VERSION);
-$VERSION = '0.08';
+$VERSION = '0.09';
 
 use fields qw(default_expire_seconds);
 
@@ -63,12 +63,17 @@ sub UNTIE{
     $self->disconnect_all();
 }
 
+sub CLEAR{
+    my $self=shift;
+    $self->memd->flush_all();
+}
+
 1;
 __END__
 
 =head1 NAME
 
-Cache::Memcached::Tie - Use Cache::Memcached::Fast like hash.
+Cache::Memcached::Tie - Use Cache::Memcached::Fast like a hash.
 
 =head1 SYNOPSIS
 
@@ -81,9 +86,11 @@ Cache::Memcached::Tie - Use Cache::Memcached::Fast like hash.
     my $memd = tie %hash,'Cache::Memcached::Tie', $default_expiration_in_seconds, {servers=>['192.168.0.77:11211']};
     $hash{b} = ['a', { b => 'a' }];
     print $hash{'a'};
-    print $memd->get('b');
+    print $memd->memd->get('b');
+    # Clears all data
+    %hash = ()
 
-    #Also we can work with slices:
+    #Also we can work with a slices:
     @hash{ 'a' .. 'z' } = ( 1 .. 26 );
     print join ',', @hash{ 'a' .. 'e' }; 
 
